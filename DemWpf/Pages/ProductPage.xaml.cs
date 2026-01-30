@@ -33,6 +33,16 @@ namespace DemWpf.Pages
             UserNameText.Text = _currentUser == null
                 ? "Гость"
                 : _currentUser.FullName;
+
+            if (_currentUser != null && (_currentUser.Role.Role1 == "Администратор"
+                || _currentUser.Role.Role1 == "Менеджер"))
+            {
+                FilterStackPanel.Visibility = System.Windows.Visibility.Visible;
+            }
+            else
+            {
+                FilterStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+            }
         }
 
         private void LoadProducts()
@@ -98,6 +108,15 @@ namespace DemWpf.Pages
             }
 
             ProductsListView.ItemsSource = result.ToList();
+        }
+
+        private void ProductsListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (_currentUser is not null && _currentUser.Role.Role1 == "Администратор" &&
+                ProductsListView.SelectedItem is Product product)
+            {
+                _frame.Navigate(new EditProductPage(_frame, product.ProductId));
+            }
         }
     }
 }

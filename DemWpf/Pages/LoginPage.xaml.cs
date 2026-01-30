@@ -1,4 +1,5 @@
 ﻿using DemWpf.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -21,7 +22,7 @@ namespace DemWpf.Pages
         {
             using var db = new Dem21Context();
 
-            var user = db.Users.FirstOrDefault(u => 
+            var user = db.Users.Include(u => u.Role).FirstOrDefault(u => 
                         u.Login == LoginTextBox.Text &&
                         u.Password == PasswordBox.Password);
 

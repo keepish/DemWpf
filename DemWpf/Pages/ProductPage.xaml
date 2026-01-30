@@ -45,7 +45,7 @@
             </ComboBox>
         </StackPanel>
 
-        <ListView x:Name="ProductsListView" Grid.Row="2" HorizontalContentAlignment="Stretch" ScrollViewer.CanContentScroll="False">
+        <ListView x:Name="ProductsListView" Grid.Row="2" HorizontalContentAlignment="Stretch" ScrollViewer.CanContentScroll="False" MouseDoubleClick="ProductsListView_MouseDoubleClick">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="Background" Value="#7FFF00"/>
