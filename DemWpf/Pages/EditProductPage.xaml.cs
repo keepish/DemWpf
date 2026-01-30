@@ -1,19 +1,7 @@
 ﻿using DemWpf.Models;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DemWpf.Pages
 {
@@ -25,6 +13,7 @@ namespace DemWpf.Pages
         private Frame _frame;
         private Product _product;
         private string _newImagePath;
+        private Dem21Context db = new Dem21Context();
 
         public EditProductPage(Frame frame, int productId)
         {
@@ -46,16 +35,14 @@ namespace DemWpf.Pages
 
         private void LoadList()
         {
-            using var db = new Dem21Context();
 
             CategoryBox.ItemsSource = db.Categories.ToList();
-            ManufacturerBox.ItemsSource = db.Manufacturers.ToList();    
+            ManufacturerBox.ItemsSource = db.Manufacturers.ToList();
             SupplierBox.ItemsSource = db.Suppliers.ToList();
         }
 
         private void LoadProduct(int productId)
         {
-            using var db = new Dem21Context();
 
             _product = db.Products.First(x => x.ProductId == productId);
 
