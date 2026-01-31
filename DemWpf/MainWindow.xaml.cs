@@ -1,6 +1,7 @@
 ﻿using DemWpf.Pages;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Navigation;
 
 namespace DemWpf
 {
@@ -18,9 +19,9 @@ namespace DemWpf
             MainFrame.Navigate(new LoginPage(MainFrame));
         }
 
-        private void MainFrame_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
+        private void MainFrame_Navigated(object sender, NavigationEventArgs e)
         {
-            this.Title = (MainFrame.Content as Page)?.Title;
+            Title = (MainFrame.Content as Page)?.Title;
         }
     }
 }

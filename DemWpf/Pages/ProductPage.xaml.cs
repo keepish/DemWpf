@@ -1,6 +1,9 @@
 ﻿using DemWpf.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Navigation;
 
 namespace DemWpf.Pages
 {
@@ -11,21 +14,39 @@ namespace DemWpf.Pages
     {
         private Frame _frame;
         private User _currentUser;
+
         private List<Product> _products;
 
-        public ProductPage(Frame frame, Models.User user)
+        public ProductPage(Frame frame, User user)
         {
             InitializeComponent();
+            try
+            {
+                _frame = frame;
+                _currentUser = user;
 
-            _frame = frame;
-            _currentUser = user;
-            
-            LoadUser();
+                _frame.Navigated += Frame_Navigated;
+
+                LoadUser();
+                LoadProducts();
+                LoadSuppliers();
+
+                SupplierFilterBox.SelectedIndex = 0;
+                SortBox.SelectedIndex = 0;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Возникла ошибка подключения к базе данных",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+        }
+
+        private void Frame_Navigated(object sender, NavigationEventArgs e)
+        {
             LoadProducts();
-            LoadSuppliers();
-
-            SupplierFilterBox.SelectedIndex = 0;
-            SortBox.SelectedItem = 0;
+            FilterChanged(null, null);
         }
 
         private void LoadUser()
@@ -34,42 +55,63 @@ namespace DemWpf.Pages
                 ? "Гость"
                 : _currentUser.FullName;
 
-            if (_currentUser != null && (_currentUser.Role.Role1 == "Администратор"
-                || _currentUser.Role.Role1 == "Менеджер"))
+
+#if DEBUG
+
+#else
+            if (_currentUser != null && (_currentUser.Role.Name == "Администратор" 
+                || _currentUser.Role.Name == "Менеджер"))
             {
-                FilterStackPanel.Visibility = System.Windows.Visibility.Visible;
+                FilterStackPanel.Visibility = Visibility.Visible;
             }
             else
             {
-                FilterStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+                FilterStackPanel.Visibility = Visibility.Collapsed;
             }
+#endif
         }
 
         private void LoadProducts()
         {
             using var db = new Dem21Context();
+            try
+            {
+                _products = db.Products
+                    .Include(x => x.Manufacturer)
+                    .Include(x => x.Supplier)
+                    .Include(x => x.Category).ToList();
 
-            _products = db.Products
-                .Include(x => x.Manufacturer)
-                .Include(x => x.Supplier)
-                .Include(x => x.Category)
-                .ToList();
+                ProductListView.ItemsSource = _products;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Возникла ошибка загрузки продкутов",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
-            ProductsListView.ItemsSource = _products;
         }
 
         private void LoadSuppliers()
         {
             using var db = new Dem21Context();
-
-            SupplierFilterBox.Items.Clear();
-            SupplierFilterBox.Items.Add("Все поставщики");
-
-            var suppliers = db.Suppliers.Select(x => x.Supplier1);
-
-            foreach (var supplier in suppliers)
+            try
             {
-                SupplierFilterBox.Items.Add(supplier);
+                SupplierFilterBox.Items.Clear();
+                SupplierFilterBox.Items.Add("Все поставщики");
+
+                var suppliers = db.Suppliers.Select(x => x.Name);
+
+                foreach (var supplier in suppliers)
+                {
+                    SupplierFilterBox.Items.Add(supplier);
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Возникла ошибка загрузки поставщиков",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
 
         }
@@ -85,38 +127,69 @@ namespace DemWpf.Pages
                 result = result.Where(p =>
                     p.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
                     p.Description.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                    p.Manufacturer.Manufacturer1.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                    p.Supplier.Supplier1.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                    p.Manufacturer.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                    p.Supplier.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
                     p.Category.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
                     p.Article.Contains(search, StringComparison.OrdinalIgnoreCase));
             }
 
             if (SupplierFilterBox.SelectedIndex > 0)
             {
-                string supplier = SupplierFilterBox.SelectedItem?.ToString();
-                result = result.Where(p => p.Supplier.Supplier1 == supplier);
+                string supplier = SupplierFilterBox.SelectedItem.ToString();
+                result = result.Where(p => p.Supplier.Name == supplier);
             }
 
             switch (SortBox.SelectedIndex)
             {
                 case 1:
-                    result = result.OrderBy(p => p.Amount); 
+                    result = result.OrderBy(p => p.Amount);
                     break;
                 case 2:
                     result = result.OrderByDescending(p => p.Amount);
                     break;
             }
+            try
+            {
+                ProductListView.ItemsSource = result.ToList();
+            }
+            catch (Exception)
+            {
 
-            ProductsListView.ItemsSource = result.ToList();
+                MessageBox.Show("Возникла ошибка применения фильтра",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            
         }
 
-        private void ProductsListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void ProductListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (_currentUser is not null && _currentUser.Role.Role1 == "Администратор" &&
-                ProductsListView.SelectedItem is Product product)
+            if (
+#if DEBUG
+                ProductListView.SelectedItem is Product product
+#else
+                && _currentUser != null &&
+                   _currentUser.Role.Name == "Администратор" s
+#endif
+                )
             {
                 _frame.Navigate(new EditProductPage(_frame, product.ProductId));
             }
+        }
+
+        private void LogOut_Click(object sender, RoutedEventArgs e)
+        {
+            _frame.GoBack();
+        }
+
+        private void AddProduct_Click(object sender, RoutedEventArgs e)
+        {
+            _frame.Navigate(new EditProductPage(_frame, 0));
+        }
+
+        private void Order_Click(object sender, RoutedEventArgs e)
+        {
+            _frame.Navigate(new OrderPage(_frame, _currentUser));
         }
     }
 }

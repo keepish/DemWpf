@@ -15,7 +15,7 @@ public partial class Order
 
     public int UserId { get; set; }
 
-    public double Code { get; set; }
+    public int Code { get; set; }
 
     public string Status { get; set; } = null!;
 

@@ -38,7 +38,7 @@ public partial class Product
 
     public virtual Supplier Supplier { get; set; } = null!;
 
-    public string PhotoPath 
+    public string PhotoPath
     {
         get
         {
@@ -51,6 +51,8 @@ public partial class Product
     }
 
     public bool IsBigDiscount => Discount > 15;
+
     public bool HasDiscount => Discount > 0;
+
     public decimal DiscountedPrice => Price * (1 - Discount / 100M);
 }

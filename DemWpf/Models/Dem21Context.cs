@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace DemWpf.Models;
 
@@ -32,6 +34,7 @@ public partial class Dem21Context : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Data Source=221-01; Initial Catalog=Dem21; Integrated Security=True; Encrypt=True; TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -47,9 +50,7 @@ public partial class Dem21Context : DbContext
         {
             entity.ToTable("Manufacturer");
 
-            entity.Property(e => e.Manufacturer1)
-                .HasMaxLength(255)
-                .HasColumnName("Manufacturer");
+            entity.Property(e => e.Name).HasMaxLength(255);
         });
 
         modelBuilder.Entity<Order>(entity =>
@@ -77,8 +78,6 @@ public partial class Dem21Context : DbContext
 
             entity.ToTable("OrderedProduct");
 
-            entity.Property(e => e.OrderId).ValueGeneratedOnAdd();
-
             entity.HasOne(d => d.Order).WithMany(p => p.OrderedProducts)
                 .HasForeignKey(d => d.OrderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -92,8 +91,6 @@ public partial class Dem21Context : DbContext
 
         modelBuilder.Entity<PickUpPoint>(entity =>
         {
-            entity.HasKey(e => e.PicUpPointId);
-
             entity.ToTable("PickUpPoint");
 
             entity.Property(e => e.Address).HasMaxLength(255);
@@ -107,7 +104,7 @@ public partial class Dem21Context : DbContext
             entity.Property(e => e.Description).HasMaxLength(255);
             entity.Property(e => e.Name).HasMaxLength(255);
             entity.Property(e => e.Photo).HasMaxLength(255);
-            entity.Property(e => e.Price).HasColumnType("decimal(38, 0)");
+            entity.Property(e => e.Price).HasColumnType("decimal(7, 2)");
             entity.Property(e => e.Unit).HasMaxLength(255);
 
             entity.HasOne(d => d.Category).WithMany(p => p.Products)
@@ -130,18 +127,16 @@ public partial class Dem21Context : DbContext
         {
             entity.ToTable("Role");
 
-            entity.Property(e => e.Role1)
+            entity.Property(e => e.Name)
                 .HasMaxLength(255)
-                .HasColumnName("Role");
+                .HasColumnName("Name");
         });
 
         modelBuilder.Entity<Supplier>(entity =>
         {
             entity.ToTable("Supplier");
 
-            entity.Property(e => e.Supplier1)
-                .HasMaxLength(255)
-                .HasColumnName("Supplier");
+            entity.Property(e => e.Name).HasMaxLength(255);
         });
 
         modelBuilder.Entity<User>(entity =>

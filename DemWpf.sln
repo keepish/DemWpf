@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemWpf", "DemWpf\DemWpf.csproj", "{D6FC82A5-959C-4CB3-90B3-F4676709AA39}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemWpf", "DemWpf\DemWpf.csproj", "{162A58DB-CDEE-4D94-8AC5-56A5FB56466D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D6FC82A5-959C-4CB3-90B3-F4676709AA39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D6FC82A5-959C-4CB3-90B3-F4676709AA39}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D6FC82A5-959C-4CB3-90B3-F4676709AA39}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D6FC82A5-959C-4CB3-90B3-F4676709AA39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{162A58DB-CDEE-4D94-8AC5-56A5FB56466D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{162A58DB-CDEE-4D94-8AC5-56A5FB56466D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{162A58DB-CDEE-4D94-8AC5-56A5FB56466D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{162A58DB-CDEE-4D94-8AC5-56A5FB56466D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {E45CD4E7-85DB-4902-BD4F-DBF2143AA7D8}
+		SolutionGuid = {D2752286-9BA8-4DE1-8CF9-957DACBD95D1}
 	EndGlobalSection
 EndGlobal

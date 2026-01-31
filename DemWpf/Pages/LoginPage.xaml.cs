@@ -18,26 +18,33 @@ namespace DemWpf.Pages
             _frame = mainFrame;
         }
 
-        private void LoginClick(object sender, System.Windows.RoutedEventArgs e)
+        private void Login_Click(object sender, RoutedEventArgs e)
         {
             using var db = new Dem21Context();
 
-            var user = db.Users.Include(u => u.Role).FirstOrDefault(u => 
-                        u.Login == LoginTextBox.Text &&
-                        u.Password == PasswordBox.Password);
-
-            if (user is null)
+            try
             {
-                MessageBox.Show("Неверный логин или пароль", "Ошибка",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-                return;
+                var user = db.Users.Include(u => u.Role).FirstOrDefault(u =>
+                    u.Login == LoginTextBox.Text &&
+                    u.Password == PasswordBox.Password);
+                if (user == null)
+                {
+                    MessageBox.Show("Неверный логин или пароль",
+                        "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                _frame.Navigate(new ProductPage(_frame, user));
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Возникла непредвиденная ошибка",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            _frame.Navigate(new ProductPage(_frame, user));
         }
 
-        private void GuestClick(object sender, System.Windows.RoutedEventArgs e)
+        private void Guest_Click(object sender, RoutedEventArgs e)
         {
             _frame.Navigate(new ProductPage(_frame, null));
         }

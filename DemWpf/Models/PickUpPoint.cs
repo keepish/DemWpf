@@ -5,7 +5,7 @@ namespace DemWpf.Models;
 
 public partial class PickUpPoint
 {
-    public int PicUpPointId { get; set; }
+    public int PickUpPointId { get; set; }
 
     public string Address { get; set; } = null!;
 
